@@ -51,6 +51,7 @@ class CoreDataManager {
     func deleteObject(withInstance managedObject: NSManagedObject){
         
         persistentContainer.viewContext.delete(managedObject)
+        saveContext()
     }
     
     func loadData(withEntityName name: String) -> [NSManagedObject] {

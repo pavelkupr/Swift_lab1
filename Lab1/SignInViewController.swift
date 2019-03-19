@@ -1,24 +1,22 @@
 //
-//  SignUpViewController.swift
+//  SignInViewController.swift
 //  Lab1
 //
-//  Created by Pavel on 3/18/19.
+//  Created by student on 3/18/19.
 //  Copyright © 2019 student. All rights reserved.
 //
 
 import UIKit
 
-class SignUpViewController: UIViewController {
+class SignInViewController: UIViewController {
 
     //MARK: Properties
     
+    private var signedUser: Employee?
     var personList: PersonList!
     
-    @IBOutlet weak var nameField: UITextField!
-    @IBOutlet weak var surnameField: UITextField!
     @IBOutlet weak var emailField: UITextField!
     @IBOutlet weak var passwordField: UITextField!
-    @IBOutlet weak var passwordRepeatField: UITextField!
     @IBOutlet weak var errorLabel: UILabel!
     
     override func viewDidLoad() {
@@ -27,28 +25,31 @@ class SignUpViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
     
-
+    //MARK: Actions
+    
+    @IBAction func logIn(_ sender: UIButton) {
+        
+    }
+    
     // MARK: - Navigation
     
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         
         super.shouldPerformSegue(withIdentifier: identifier, sender: sender)
-        var result = true
-        
+
         switch identifier {
-        case "TableViewSegue":
-            if let error = personList?.addNewPerson(withName: nameField.text!, withSurname: surnameField.text!, withEmail: emailField.text!, withPassword: passwordField.text!, withPasswordRepeat: passwordRepeatField.text!) {
-                errorLabel.text = error
-                result = false
+        case "TableViewSegueFromSignIn":
+            guard let person = personList.getPerson(withEmail: emailField.text!, withPassword: passwordField.text!) else {
+                errorLabel.text = "User doesn't exist"
+                return false
             }
-            else {
-                errorLabel.text = ""
-            }
+            signedUser = person
+            
         default:
             fatalError("Unexpected segue")
         }
         
-        return result
+        return true
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -57,10 +58,10 @@ class SignUpViewController: UIViewController {
         
         switch(segue.identifier ?? "") {
             
-        case "TableViewSegue":
+        case "TableViewSegueFromSignIn":
             if let employeeTVC = segue.destination as? EmployeesTableViewController{
                 employeeTVC.personList = personList
-                employeeTVC.currSignInUser = personList?.getPerson(withEmail: emailField.text!, withPassword: passwordField.text!)
+                employeeTVC.currSignInUser = signedUser
             }
             else{
                 fatalError("Unexpected destination \(segue.destination)")
@@ -71,6 +72,6 @@ class SignUpViewController: UIViewController {
             
         }
     }
- 
-
+    
+    
 }

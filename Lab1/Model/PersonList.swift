@@ -40,18 +40,27 @@ class PersonList {
         return nil
     }
     
-    func editPerson(withInstance person: Employee, withName name: String, withSurname surname: String) -> String? {
+    func editPerson(withInstance person: Employee, withName name: String, withSurname surname: String, withImage image: Data?) -> String? {
         
         if let error = checkChangablePersonData(withName: name, withSurname: surname) {
             return error
         }
         
-        let props = [
+        var props: [String:Any] = [
             "name":name,
             "surname":surname
         ]
         
+        if image != nil {
+            props = [
+                "name":name,
+                "surname":surname,
+                "personImage":image!]
+        }
+        
         CoreDataManager.instance.editObject(withInstance: person, withProperties: props)
+        
+        loadData()
         
         return nil
     }
@@ -59,20 +68,18 @@ class PersonList {
     func deletePerson(withInstance person: Employee) {
         
         CoreDataManager.instance.deleteObject(withInstance: person)
+        loadData()
     }
     
-    func isPersonExists(withEmail email: String, withPassword pass: String) -> Bool{
-        
-        var result = false
+    func getPerson(withEmail email: String, withPassword pass: String) -> Employee? {
         
         for employee in employees {
             if employee.email == email, employee.password == pass{
-                result = true
-                break
+                return employee
             }
         }
         
-        return result
+        return nil
     }
     
     //MARK: Private Methods

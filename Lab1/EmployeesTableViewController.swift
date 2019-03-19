@@ -10,6 +10,12 @@ import UIKit
 
 class EmployeesTableViewController: UITableViewController {
 
+    //MARK: Properties
+    
+    var personList: PersonList!
+    var visualList: [Employee]!
+    var currSignInUser: Employee!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -21,47 +27,59 @@ class EmployeesTableViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
-    // MARK: - Table view data source
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        updateVisualList()
     }
+    
+    // MARK: - Table view data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 0
+        
+        return visualList.count
     }
 
-    /*
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+        
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "EmployeeCell", for: indexPath) as? EmployeeTableViewCell else {
+            
+            fatalError("Unexpected type of cell")
+        }
+        
+        cell.nameLabel.text = visualList[indexPath.row].name
+        cell.surnameLabel.text = visualList[indexPath.row].surname
 
-        // Configure the cell...
-
+        if (visualList[indexPath.row].personImage != nil) {
+            let convertedImage = UIImage(data: visualList[indexPath.row].personImage! as Data)
+            cell.employeeImageView.image = convertedImage!
+        }
+        
         return cell
     }
-    */
+    
 
-    /*
+    
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+ 
+        return indexPath.row != 0
     }
-    */
+ 
 
-    /*
+    
     // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // Delete the row from the data source
+            personList.deletePerson(withInstance: visualList.remove(at: indexPath.row))
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }    
     }
-    */
+ 
 
     /*
     // Override to support rearranging the table view.
@@ -77,16 +95,29 @@ class EmployeesTableViewController: UITableViewController {
         return true
     }
     */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    
+    //MARK: Navigation
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+        
+        super.prepare(for: segue, sender: sender)
+        
+        switch(segue.identifier ?? "") {
+            
+        case "Edit":
+            if let editEmployeeVC = segue.destination as? EmployeeEditViewController{
+                editEmployeeVC.personList = personList
+                editEmployeeVC.currSignInUser = currSignInUser
+            }
+            else{
+                fatalError("Unexpected destination \(segue.destination)")
+            }
+            
+        default:
+            fatalError("Unexpected segue")
+            
+        }
     }
-    */
     
     //MARK: Private
     
@@ -94,4 +125,16 @@ class EmployeesTableViewController: UITableViewController {
         navigationController?.popToRootViewController(animated: true)
     }
 
+    private func updateVisualList() {
+        
+        visualList = []
+        visualList.append(currSignInUser)
+        
+        for employee in personList.employees {
+            if employee != currSignInUser {
+                visualList.append(employee)
+            }
+        }
+        tableView.reloadData()
+    }
 }

@@ -31,7 +31,12 @@ class ViewController: UIViewController {
         switch(segue.identifier ?? "") {
             
         case "SignIn":
-            break
+            if let signInVC = segue.destination as? SignInViewController{
+                signInVC.personList = personList
+            }
+            else{
+                fatalError("Unexpected destination \(segue.destination)")
+            }
             
         case "SignUp":
             if let signUpVC = segue.destination as? SignUpViewController{
@@ -42,7 +47,7 @@ class ViewController: UIViewController {
             }
             
         default:
-            break
+            fatalError("Unexpected segue")
             
         }
      }
