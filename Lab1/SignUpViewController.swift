@@ -24,6 +24,11 @@ class SignUpViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        guard let navigationController = navigationController! as? EmployeeNavigationController else {
+            fatalError("Unexpected navigation controller")
+        }
+        
+        personList = navigationController.personList
         // Do any additional setup after loading the view.
     }
     
@@ -37,11 +42,14 @@ class SignUpViewController: UIViewController {
         
         switch identifier {
         case "TableViewSegue":
-            if let error = personList?.addNewPerson(withName: nameField.text!, withSurname: surnameField.text!, withEmail: emailField.text!, withPassword: passwordField.text!, withPasswordRepeat: passwordRepeatField.text!) {
+            if let error = personList?.addNewAdmin(withName: nameField.text!, withSurname: surnameField.text!, withEmail: emailField.text!, withPassword: passwordField.text!, withPasswordRepeat: passwordRepeatField.text!) {
                 errorLabel.text = error
                 result = false
             }
             else {
+                guard personList.signIn(withEmail: emailField.text!, withPassword: passwordField.text!) == true else {
+                    fatalError("Can't sign in with created user")
+                }
                 errorLabel.text = ""
             }
         default:
@@ -58,11 +66,7 @@ class SignUpViewController: UIViewController {
         switch(segue.identifier ?? "") {
             
         case "TableViewSegue":
-            if let employeeTVC = segue.destination as? EmployeesTableViewController{
-                employeeTVC.personList = personList
-                employeeTVC.currSignInUser = personList?.getPerson(withEmail: emailField.text!, withPassword: passwordField.text!)
-            }
-            else{
+            guard segue.destination as? EmployeesTableViewController != nil else {
                 fatalError("Unexpected destination \(segue.destination)")
             }
             

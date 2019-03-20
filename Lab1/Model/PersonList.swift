@@ -13,11 +13,13 @@ class PersonList {
     //MARK: Properties
     private(set) var employees: [Employee]!
     
+    private(set) var currSignInUser: Employee?
+    
     init(){
         loadData()
     }
     
-    func addNewPerson(withName name: String, withSurname surname: String, withEmail email: String, withPassword password: String, withPasswordRepeat passwordRepeat: String) -> String? {
+    func addNewAdmin(withName name: String, withSurname surname: String, withEmail email: String, withPassword password: String, withPasswordRepeat passwordRepeat: String) -> String? {
         
         if let error = checkAllPersonData(withName: name, withSurname: surname, withEmail: email, withPassword: password, withPasswordRepeat: passwordRepeat){
             return error
@@ -27,8 +29,38 @@ class PersonList {
             "name":name,
             "surname":surname,
             "email":email,
-            "password":password
+            "password":password,
+            "isAdmin":true
         ]
+        
+        if let employee = CoreDataManager.instance.addNewObject(withEntityName: "Employee", withProperties: props) as? Employee {
+            employees.append(employee)
+        }
+        else {
+            fatalError("Can't cast data from storage")
+        }
+        
+        return nil
+    }
+    
+    func addNewPerson(withName name: String, withSurname surname: String, withImage image: Data?) -> String? {
+        
+        if let error = checkChangablePersonData(withName: name, withSurname: surname) {
+            return error
+        }
+        var props: [String: Any] = [
+            "name":name,
+            "surname":surname,
+            "isAdmin":false
+        ]
+        
+        if image != nil {
+            props = [
+                "name":name,
+                "surname":surname,
+                "isAdmin":false,
+                "personImage":image!]
+        }
         
         if let employee = CoreDataManager.instance.addNewObject(withEntityName: "Employee", withProperties: props) as? Employee {
             employees.append(employee)
@@ -60,6 +92,7 @@ class PersonList {
         
         CoreDataManager.instance.editObject(withInstance: person, withProperties: props)
         
+        //TODO: Optimize load!!!
         loadData()
         
         return nil
@@ -68,18 +101,21 @@ class PersonList {
     func deletePerson(withInstance person: Employee) {
         
         CoreDataManager.instance.deleteObject(withInstance: person)
+        
+        //TODO: Optimize load!!!
         loadData()
     }
     
-    func getPerson(withEmail email: String, withPassword pass: String) -> Employee? {
+    func signIn(withEmail email: String, withPassword pass: String) -> Bool {
         
         for employee in employees {
             if employee.email == email, employee.password == pass{
-                return employee
+                currSignInUser = employee
+                return true
             }
         }
         
-        return nil
+        return false
     }
     
     //MARK: Private Methods

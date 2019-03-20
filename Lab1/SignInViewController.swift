@@ -12,7 +12,6 @@ class SignInViewController: UIViewController {
 
     //MARK: Properties
     
-    private var signedUser: Employee?
     var personList: PersonList!
     
     @IBOutlet weak var emailField: UITextField!
@@ -21,7 +20,13 @@ class SignInViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        guard let navigationController = navigationController! as? EmployeeNavigationController else {
+            fatalError("Unexpected navigation controller")
+        }
+        
+        personList = navigationController.personList
+        
         // Do any additional setup after loading the view.
     }
     
@@ -39,11 +44,8 @@ class SignInViewController: UIViewController {
 
         switch identifier {
         case "TableViewSegueFromSignIn":
-            guard let person = personList.getPerson(withEmail: emailField.text!, withPassword: passwordField.text!) else {
-                errorLabel.text = "User doesn't exist"
-                return false
-            }
-            signedUser = person
+            
+            return personList.signIn(withEmail: emailField.text!, withPassword: passwordField.text!)
             
         default:
             fatalError("Unexpected segue")
@@ -59,11 +61,7 @@ class SignInViewController: UIViewController {
         switch(segue.identifier ?? "") {
             
         case "TableViewSegueFromSignIn":
-            if let employeeTVC = segue.destination as? EmployeesTableViewController{
-                employeeTVC.personList = personList
-                employeeTVC.currSignInUser = signedUser
-            }
-            else{
+            guard segue.destination as? EmployeesTableViewController != nil else {
                 fatalError("Unexpected destination \(segue.destination)")
             }
             

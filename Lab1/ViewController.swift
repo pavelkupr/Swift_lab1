@@ -13,12 +13,8 @@ class ViewController: UIViewController {
     
     //MARK: Properties
     
-    var personList: PersonList?
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        personList = PersonList()
     }
     
     
@@ -31,18 +27,12 @@ class ViewController: UIViewController {
         switch(segue.identifier ?? "") {
             
         case "SignIn":
-            if let signInVC = segue.destination as? SignInViewController{
-                signInVC.personList = personList
-            }
-            else{
+            guard segue.destination as? SignInViewController != nil else {
                 fatalError("Unexpected destination \(segue.destination)")
             }
             
         case "SignUp":
-            if let signUpVC = segue.destination as? SignUpViewController{
-                signUpVC.personList = personList
-            }
-            else{
+            guard segue.destination as? SignUpViewController != nil else {
                 fatalError("Unexpected destination \(segue.destination)")
             }
             

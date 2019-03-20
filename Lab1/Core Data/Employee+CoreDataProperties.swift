@@ -2,7 +2,7 @@
 //  Employee+CoreDataProperties.swift
 //  Lab1
 //
-//  Created by student on 3/19/19.
+//  Created by student on 3/20/19.
 //  Copyright © 2019 student. All rights reserved.
 //
 //
@@ -20,7 +20,10 @@ extension Employee {
     @NSManaged public var email: String?
     @NSManaged public var name: String?
     @NSManaged public var password: String?
-    @NSManaged public var surname: String?
     @NSManaged public var personImage: NSData?
+    @NSManaged public var surname: String?
+    @NSManaged public var isAdmin: Bool
+    @NSManaged public var gender: String?
+    @NSManaged public var info: String?
 
 }

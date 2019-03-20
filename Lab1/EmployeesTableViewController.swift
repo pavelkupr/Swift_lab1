@@ -14,7 +14,6 @@ class EmployeesTableViewController: UITableViewController {
     
     var personList: PersonList!
     var visualList: [Employee]!
-    var currSignInUser: Employee!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,8 +22,11 @@ class EmployeesTableViewController: UITableViewController {
         let newBackButton = UIBarButtonItem(title: "Log Out", style: .plain, target: self, action: #selector(EmployeesTableViewController.back(sender:)))
         self.navigationItem.leftBarButtonItem = newBackButton
         
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        guard let navigationController = navigationController! as? EmployeeNavigationController else {
+            fatalError("Unexpected navigation controller")
+        }
+        
+        personList = navigationController.personList
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -52,9 +54,11 @@ class EmployeesTableViewController: UITableViewController {
         cell.nameLabel.text = visualList[indexPath.row].name
         cell.surnameLabel.text = visualList[indexPath.row].surname
 
-        if (visualList[indexPath.row].personImage != nil) {
-            let convertedImage = UIImage(data: visualList[indexPath.row].personImage! as Data)
-            cell.employeeImageView.image = convertedImage!
+        if let data = visualList[indexPath.row].personImage {
+            cell.employeeImageView.image = UIImage(data: data as Data)
+        }
+        else {
+            cell.employeeImageView.image = UIImage(named: "Placeholder")
         }
         
         return cell
@@ -64,8 +68,8 @@ class EmployeesTableViewController: UITableViewController {
     
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
- 
-        return indexPath.row != 0
+        
+        return !visualList[indexPath.row].isAdmin
     }
  
 
@@ -79,22 +83,6 @@ class EmployeesTableViewController: UITableViewController {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }    
     }
- 
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
     
     //MARK: Navigation
     
@@ -104,14 +92,24 @@ class EmployeesTableViewController: UITableViewController {
         
         switch(segue.identifier ?? "") {
             
+        case "Add":
+            guard segue.destination as? EmployeeEditViewController != nil else {
+                fatalError("Unexpected destination")
+            }
+            
         case "Edit":
-            if let editEmployeeVC = segue.destination as? EmployeeEditViewController{
-                editEmployeeVC.personList = personList
-                editEmployeeVC.currSignInUser = currSignInUser
+            guard let editEmployeeVC = segue.destination as? EmployeeEditViewController else {
+                fatalError("Unexpected destination")
             }
-            else{
-                fatalError("Unexpected destination \(segue.destination)")
+            
+            guard let cell = sender as? EmployeeTableViewCell else {
+                fatalError("Unexpected sender")
             }
+            
+            guard let index = tableView.indexPath(for: cell) else {
+                fatalError("Cell does't exist")
+            }
+            editEmployeeVC.editPerson = visualList[index.row]
             
         default:
             fatalError("Unexpected segue")
@@ -128,10 +126,10 @@ class EmployeesTableViewController: UITableViewController {
     private func updateVisualList() {
         
         visualList = []
-        visualList.append(currSignInUser)
+        visualList.append(personList.currSignInUser!)
         
         for employee in personList.employees {
-            if employee != currSignInUser {
+            if employee != personList.currSignInUser! {
                 visualList.append(employee)
             }
         }

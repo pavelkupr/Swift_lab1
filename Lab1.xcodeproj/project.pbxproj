@@ -16,6 +16,8 @@
 		3FBAE819223FA8ED00A4D8A5 /* Person.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3FBAE817223FA8ED00A4D8A5 /* Person.xcdatamodeld */; };
 		3FBAE81B223FA8EE00A4D8A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FBAE81A223FA8EE00A4D8A5 /* Assets.xcassets */; };
 		3FBAE81E223FA8EE00A4D8A5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3FBAE81C223FA8EE00A4D8A5 /* LaunchScreen.storyboard */; };
+		3FC9E7FF224260E900FFDDB7 /* EmployeeNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC9E7FE224260E900FFDDB7 /* EmployeeNavigationController.swift */; };
+		3FC9E80122428AE300FFDDB7 /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC9E80022428AE300FFDDB7 /* UIImageExtension.swift */; };
 		3FFBE8272240F7ED00AA89DB /* EmployeeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFBE8262240F7ED00AA89DB /* EmployeeTableViewCell.swift */; };
 		E927CC3D2240DBB300836441 /* EmployeesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E927CC3C2240DBB300836441 /* EmployeesTableViewController.swift */; };
 		E9C499262240443D00C2D550 /* Employee+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C499242240443D00C2D550 /* Employee+CoreDataClass.swift */; };
@@ -36,6 +38,8 @@
 		3FBAE81A223FA8EE00A4D8A5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3FBAE81D223FA8EE00A4D8A5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3FBAE81F223FA8EE00A4D8A5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3FC9E7FE224260E900FFDDB7 /* EmployeeNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeeNavigationController.swift; sourceTree = "<group>"; };
+		3FC9E80022428AE300FFDDB7 /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
 		3FFBE8262240F7ED00AA89DB /* EmployeeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeeTableViewCell.swift; sourceTree = "<group>"; };
 		E927CC3C2240DBB300836441 /* EmployeesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeesTableViewController.swift; sourceTree = "<group>"; };
 		E9C499242240443D00C2D550 /* Employee+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Employee+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -83,6 +87,8 @@
 				E927CC3C2240DBB300836441 /* EmployeesTableViewController.swift */,
 				3FFBE8262240F7ED00AA89DB /* EmployeeTableViewCell.swift */,
 				3F31C99B2241177600E05A3F /* EmployeeEditViewController.swift */,
+				3FC9E80022428AE300FFDDB7 /* UIImageExtension.swift */,
+				3FC9E7FE224260E900FFDDB7 /* EmployeeNavigationController.swift */,
 				3FBAE814223FA8ED00A4D8A5 /* Main.storyboard */,
 				3FBAE81F223FA8EE00A4D8A5 /* Info.plist */,
 			);
@@ -192,12 +198,14 @@
 				3F31C99C2241177600E05A3F /* EmployeeEditViewController.swift in Sources */,
 				3F030B01223FB7DD00B8BD4D /* SignInViewController.swift in Sources */,
 				3FBAE813223FA8ED00A4D8A5 /* ViewController.swift in Sources */,
+				3FC9E80122428AE300FFDDB7 /* UIImageExtension.swift in Sources */,
 				3FBAE819223FA8ED00A4D8A5 /* Person.xcdatamodeld in Sources */,
 				3F030B03223FB9D200B8BD4D /* PersonList.swift in Sources */,
 				E9C499272240443D00C2D550 /* Employee+CoreDataProperties.swift in Sources */,
 				E927CC3D2240DBB300836441 /* EmployeesTableViewController.swift in Sources */,
 				3FFBE8272240F7ED00AA89DB /* EmployeeTableViewCell.swift in Sources */,
 				E9C4992B224047FE00C2D550 /* CoreDataManager.swift in Sources */,
+				3FC9E7FF224260E900FFDDB7 /* EmployeeNavigationController.swift in Sources */,
 				E9C4992D22405C5500C2D550 /* SignUpViewController.swift in Sources */,
 				E9C499262240443D00C2D550 /* Employee+CoreDataClass.swift in Sources */,
 				3FBAE811223FA8ED00A4D8A5 /* AppDelegate.swift in Sources */,
