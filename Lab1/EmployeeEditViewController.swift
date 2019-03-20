@@ -13,7 +13,8 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
     //MARK: Properties
     
     var personList: PersonList!
-    var currSignInUser: Employee!
+    var editPerson: Employee?
+    var isImageChaged = false
     
     @IBOutlet weak var personImageView: UIImageView!
     @IBOutlet weak var nameField: UITextField!
@@ -23,18 +24,24 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.hidesBackButton = true
-        let newButton = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(EmployeeEditViewController.cancel(sender:)))
-        
-        self.navigationItem.leftBarButtonItem = newButton
         self.personImageView.layer.cornerRadius = personImageView.frame.size.width / 2
         self.personImageView.clipsToBounds = true
         self.personImageView.layer.borderWidth = 3.0
         self.personImageView.layer.borderColor = UIColor.gray.cgColor
         
-        nameField.text = currSignInUser.name
-        surnameField.text = currSignInUser.surname
+        guard let navigationController = navigationController! as? EmployeeNavigationController else {
+            fatalError("Unexpected navigation controller")
+        }
         
+        personList = navigationController.personList
+        if let person = editPerson {
+            nameField.text = person.name
+            surnameField.text = person.surname
+            
+            if let data = person.personImage {
+                personImageView.image = UIImage(data: data as Data)
+            }
+        }
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -48,6 +55,7 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
         }
         
         personImageView.image = selectedImage
+        isImageChaged = true
         
         // Dismiss the picker.
         dismiss(animated: true, completion: nil)
@@ -59,15 +67,26 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
         
         var data: Data? = nil
         
-        if let myImage = personImageView.image!.pngData() {
+        if isImageChaged, let myImage = personImageView.image!.fixOrientation().pngData() {
             data = myImage
         }
         
-        if let error = personList?.editPerson(withInstance: currSignInUser, withName: nameField.text!, withSurname: surnameField.text!, withImage: data) {
-            errorLabel.text = error
+        if let person = editPerson {
+            
+            if let error = personList.editPerson(withInstance: person, withName: nameField.text!, withSurname: surnameField.text!, withImage: data) {
+                errorLabel.text = error
+            }
+            else {
+                navigationController?.popViewController(animated: true)
+            }
         }
         else {
-            navigationController?.popViewController(animated: true)
+            if let error = personList.addNewPerson(withName: nameField.text!, withSurname: surnameField.text!, withImage: data) {
+                errorLabel.text = error
+            }
+            else {
+                navigationController?.popViewController(animated: true)
+            }
         }
     }
     
@@ -83,10 +102,17 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
         present(imagePickerController, animated: true, completion: nil)
     }
     
+    @IBAction func cancel(_ sender: UIBarButtonItem) {
+        
+        if let owningNavigationController = navigationController {
+            owningNavigationController.popViewController(animated: true)
+        }
+        else {
+            fatalError("This controller is not inside a navigation controller.")
+        }
+    }
+    
     //MARK: Private Methods
     
-    @objc private func cancel(sender: UIBarButtonItem) {
-        navigationController?.popViewController(animated: true)
-    }
 
 }
