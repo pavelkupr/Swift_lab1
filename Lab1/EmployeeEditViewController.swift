@@ -8,38 +8,52 @@
 
 import UIKit
 
-class EmployeeEditViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class EmployeeEditViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
 
     //MARK: Properties
     
     var personList: PersonList!
     var editPerson: Employee?
-    var isImageChaged = false
+    var isImageChanged = false
     
     @IBOutlet weak var personImageView: UIImageView!
     @IBOutlet weak var nameField: UITextField!
     @IBOutlet weak var surnameField: UITextField!
     @IBOutlet weak var errorLabel: UILabel!
+    @IBOutlet weak var deleteButton: UIButton!
+    @IBOutlet weak var genderField: FieldWithPicker!
+    @IBOutlet weak var birthField: UITextField!
+    @IBOutlet weak var infoView: UITextView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.personImageView.layer.cornerRadius = personImageView.frame.size.width / 2
-        self.personImageView.clipsToBounds = true
-        self.personImageView.layer.borderWidth = 3.0
-        self.personImageView.layer.borderColor = UIColor.gray.cgColor
+        infoView.layer.borderColor = UIColor.init(red: 220/255, green: 220/255, blue: 220/255, alpha: 1).cgColor
+        infoView.layer.borderWidth = 1.0
+        infoView.layer.cornerRadius = 5.0
+        
+        deleteButton.isHidden = true
+        
+        genderField.picker.delegate = self
         
         guard let navigationController = navigationController! as? EmployeeNavigationController else {
             fatalError("Unexpected navigation controller")
         }
         
         personList = navigationController.personList
+        
         if let person = editPerson {
             nameField.text = person.name
             surnameField.text = person.surname
+            birthField.text = person.birthdate
+            genderField.text = person.gender
             
             if let data = person.personImage {
                 personImageView.image = UIImage(data: data as Data)
+            }
+            
+            if !person.isAdmin || person == personList.currSignInUser {
+               deleteButton.isHidden = false
             }
         }
     }
@@ -55,10 +69,31 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
         }
         
         personImageView.image = selectedImage
-        isImageChaged = true
+        isImageChanged = true
         
         // Dismiss the picker.
         dismiss(animated: true, completion: nil)
+    }
+    
+    //MARK: UIPickerViewDataSource
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return personList.genderTypes.count
+    }
+    
+    func pickerView( _ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return personList.genderTypes[row]
+    }
+    
+    //MARK: UIPickerViewDelegate
+    
+    func pickerView( _ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        genderField.text = personList.genderTypes[row]
+        view.endEditing(true)
     }
     
     //MARK: Actions
@@ -67,13 +102,13 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
         
         var data: Data? = nil
         
-        if isImageChaged, let myImage = personImageView.image!.fixOrientation().pngData() {
+        if isImageChanged, let myImage = personImageView.image!.fixOrientation().pngData() {
             data = myImage
         }
         
         if let person = editPerson {
             
-            if let error = personList.editPerson(withInstance: person, withName: nameField.text!, withSurname: surnameField.text!, withImage: data) {
+            if let error = personList.editPerson(withInstance: person, withName: nameField.text!, withSurname: surnameField.text!, withGender:  genderField.text!, withBirthdate:  birthField.text!, withImage: data) {
                 errorLabel.text = error
             }
             else {
@@ -81,7 +116,7 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
             }
         }
         else {
-            if let error = personList.addNewPerson(withName: nameField.text!, withSurname: surnameField.text!, withImage: data) {
+            if let error = personList.addNewPerson(withName: nameField.text!, withSurname: surnameField.text!, withGender: genderField.text!, withBirthdate: birthField.text!, withImage: data) {
                 errorLabel.text = error
             }
             else {

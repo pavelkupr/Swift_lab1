@@ -19,10 +19,6 @@ class EmployeeTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        self.employeeImageView.layer.cornerRadius = employeeImageView.frame.size.width / 2
-        self.employeeImageView.clipsToBounds = true
-        self.employeeImageView.layer.borderWidth = 3.0
-        self.employeeImageView.layer.borderColor = UIColor.gray.cgColor
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

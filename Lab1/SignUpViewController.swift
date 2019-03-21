@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SignUpViewController: UIViewController {
+class SignUpViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
 
     //MARK: Properties
     
@@ -20,18 +20,41 @@ class SignUpViewController: UIViewController {
     @IBOutlet weak var passwordField: UITextField!
     @IBOutlet weak var passwordRepeatField: UITextField!
     @IBOutlet weak var errorLabel: UILabel!
+    @IBOutlet weak var genderField: FieldWithPicker!
+    @IBOutlet weak var birthField: BirthField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        genderField.picker.delegate = self
+        
         guard let navigationController = navigationController! as? EmployeeNavigationController else {
             fatalError("Unexpected navigation controller")
         }
         
         personList = navigationController.personList
-        // Do any additional setup after loading the view.
     }
     
+    //MARK: UIPickerViewDataSource
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return personList.genderTypes.count
+    }
+    
+    func pickerView( _ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return personList.genderTypes[row]
+    }
+    
+    //MARK: UIPickerViewDelegate
+    
+    func pickerView( _ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        genderField.text = personList.genderTypes[row]
+        view.endEditing(true)
+    }
 
     // MARK: - Navigation
     
@@ -42,7 +65,7 @@ class SignUpViewController: UIViewController {
         
         switch identifier {
         case "TableViewSegue":
-            if let error = personList?.addNewAdmin(withName: nameField.text!, withSurname: surnameField.text!, withEmail: emailField.text!, withPassword: passwordField.text!, withPasswordRepeat: passwordRepeatField.text!) {
+            if let error = personList?.addNewAdmin(withName: nameField.text!, withSurname: surnameField.text!, withGender:  genderField.text!, withBirthdate: birthField.text!, withEmail: emailField.text!, withPassword: passwordField.text!, withPasswordRepeat: passwordRepeatField.text!) {
                 errorLabel.text = error
                 result = false
             }

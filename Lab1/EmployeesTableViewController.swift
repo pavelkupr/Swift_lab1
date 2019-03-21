@@ -17,10 +17,6 @@ class EmployeesTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        navigationItem.hidesBackButton = true
-        let newBackButton = UIBarButtonItem(title: "Log Out", style: .plain, target: self, action: #selector(EmployeesTableViewController.back(sender:)))
-        self.navigationItem.leftBarButtonItem = newBackButton
         
         guard let navigationController = navigationController! as? EmployeeNavigationController else {
             fatalError("Unexpected navigation controller")
@@ -107,7 +103,7 @@ class EmployeesTableViewController: UITableViewController {
             }
             
             guard let index = tableView.indexPath(for: cell) else {
-                fatalError("Cell does't exist")
+                fatalError("Cell doesn't exist")
             }
             editEmployeeVC.editPerson = visualList[index.row]
             
@@ -117,22 +113,21 @@ class EmployeesTableViewController: UITableViewController {
         }
     }
     
-    //MARK: Private
+    //MARK: Actions
     
-    @objc private func back(sender: UIBarButtonItem) {
+    @IBAction func logOut(_ sender: UIBarButtonItem) {
         navigationController?.popToRootViewController(animated: true)
     }
+    
+    //MARK: Private
 
     private func updateVisualList() {
         
-        visualList = []
-        visualList.append(personList.currSignInUser!)
+        visualList = [personList.currSignInUser!]
+
+        visualList += personList.employees.filter { $0 != personList.currSignInUser && $0.isAdmin }
+        visualList += personList.employees.filter { !$0.isAdmin }
         
-        for employee in personList.employees {
-            if employee != personList.currSignInUser! {
-                visualList.append(employee)
-            }
-        }
         tableView.reloadData()
     }
 }

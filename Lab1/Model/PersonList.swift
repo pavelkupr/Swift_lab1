@@ -15,13 +15,15 @@ class PersonList {
     
     private(set) var currSignInUser: Employee?
     
+    let genderTypes = ["Male", "Female", "Other"]
+    
     init(){
         loadData()
     }
     
-    func addNewAdmin(withName name: String, withSurname surname: String, withEmail email: String, withPassword password: String, withPasswordRepeat passwordRepeat: String) -> String? {
+    func addNewAdmin(withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String, withEmail email: String, withPassword password: String, withPasswordRepeat passwordRepeat: String) -> String? {
         
-        if let error = checkAllPersonData(withName: name, withSurname: surname, withEmail: email, withPassword: password, withPasswordRepeat: passwordRepeat){
+        if let error = checkAllPersonData(withName: name, withSurname: surname, withGender: gender, withBirthdate: birthdate, withEmail: email, withPassword: password, withPasswordRepeat: passwordRepeat){
             return error
         }
         
@@ -30,6 +32,8 @@ class PersonList {
             "surname":surname,
             "email":email,
             "password":password,
+            "gender":gender,
+            "birthdate":birthdate,
             "isAdmin":true
         ]
         
@@ -43,23 +47,22 @@ class PersonList {
         return nil
     }
     
-    func addNewPerson(withName name: String, withSurname surname: String, withImage image: Data?) -> String? {
+    func addNewPerson(withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String, withImage image: Data?) -> String? {
         
-        if let error = checkChangablePersonData(withName: name, withSurname: surname) {
+        if let error = checkChangablePersonData(withName: name, withSurname: surname, withGender: gender, withBirthdate: birthdate) {
             return error
         }
+        
         var props: [String: Any] = [
             "name":name,
             "surname":surname,
+            "gender":gender,
+            "birthdate":birthdate,
             "isAdmin":false
         ]
         
-        if image != nil {
-            props = [
-                "name":name,
-                "surname":surname,
-                "isAdmin":false,
-                "personImage":image!]
+        if let img = image {
+            props["personImage"] = img
         }
         
         if let employee = CoreDataManager.instance.addNewObject(withEntityName: "Employee", withProperties: props) as? Employee {
@@ -72,28 +75,27 @@ class PersonList {
         return nil
     }
     
-    func editPerson(withInstance person: Employee, withName name: String, withSurname surname: String, withImage image: Data?) -> String? {
+    func editPerson(withInstance person: Employee, withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String, withImage image: Data?) -> String? {
         
-        if let error = checkChangablePersonData(withName: name, withSurname: surname) {
+        if let error = checkChangablePersonData(withName: name, withSurname: surname, withGender: gender, withBirthdate: birthdate) {
             return error
         }
+        person.name = name
+        person.surname = surname
         
         var props: [String:Any] = [
             "name":name,
-            "surname":surname
+            "surname":surname,
+            "gender":gender,
+            "birthdate":birthdate
         ]
         
-        if image != nil {
-            props = [
-                "name":name,
-                "surname":surname,
-                "personImage":image!]
+        if let img = image {
+            props["personImage"] = img
+            person.personImage = img as NSData
         }
         
         CoreDataManager.instance.editObject(withInstance: person, withProperties: props)
-        
-        //TODO: Optimize load!!!
-        loadData()
         
         return nil
     }
@@ -102,8 +104,11 @@ class PersonList {
         
         CoreDataManager.instance.deleteObject(withInstance: person)
         
-        //TODO: Optimize load!!!
-        loadData()
+        guard let index = employees.firstIndex(of: person) else {
+            fatalError("Array doesn't contain \(person)")
+        }
+        
+        employees.remove(at: index)
     }
     
     func signIn(withEmail email: String, withPassword pass: String) -> Bool {
@@ -129,21 +134,29 @@ class PersonList {
         }
     }
     
-    private func checkChangablePersonData(withName name: String, withSurname surname: String) -> String? {
+    private func checkChangablePersonData(withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String) -> String? {
         
         var error : String? = nil
+        let datePredicate = NSPredicate(format:"SELF MATCHES %@", "[0-3][0-9]/[0-1][0-9]/[0-9]{4}")
         
         if name.count < 1 || surname.count < 1 {
             error = "Name and surname must contain 1 or more symbols."
         }
         
+        if !genderTypes.contains(gender) {
+            error = (error == nil ? "Choose gender." : error! + "\nChoose gender.")
+        }
+        
+        if !datePredicate.evaluate(with: birthdate) {
+            error = (error == nil ? "Choose birthdate." : error! + "\nChoose birthdate.")
+        }
+        
         return error
     }
     
-    private func checkAllPersonData(withName name: String, withSurname surname: String, withEmail email: String, withPassword password: String, withPasswordRepeat passwordRepeat: String) -> String? {
+    private func checkAllPersonData(withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String, withEmail email: String, withPassword password: String, withPasswordRepeat passwordRepeat: String) -> String? {
         
-        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
-        let emailPredicate = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
+        let emailPredicate = NSPredicate(format:"SELF MATCHES %@", "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}")
         var error : String? = nil
 
         if password.count <= 7 {
@@ -158,7 +171,7 @@ class PersonList {
             error = (error == nil ? "E-mail must be correct." : error! + "\nE-mail must be correct.")
         }
         
-        if let errMsg = checkChangablePersonData(withName: name, withSurname: surname) {
+        if let errMsg = checkChangablePersonData(withName: name, withSurname: surname, withGender: gender, withBirthdate: birthdate) {
             error = (error == nil ? errMsg : error! + "\n" + errMsg)
         }
         

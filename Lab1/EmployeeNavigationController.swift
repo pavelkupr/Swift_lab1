@@ -17,12 +17,6 @@ class EmployeeNavigationController: UINavigationController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if presentingViewController == nil {
-            print("nil")
-        }
-        
-        // Do any additional setup after loading the view.
     }
 
 }
