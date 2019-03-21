@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SignUpViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+class SignUpViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate {
 
     //MARK: Properties
     
@@ -24,9 +24,16 @@ class SignUpViewController: UIViewController, UIPickerViewDelegate, UIPickerView
     @IBOutlet weak var birthField: BirthField!
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
 
         genderField.picker.delegate = self
+        genderField.delegate = self
+        nameField.delegate = self
+        surnameField.delegate = self
+        emailField.delegate = self
+        passwordField.delegate = self
+        passwordRepeatField.delegate = self
         
         guard let navigationController = navigationController! as? EmployeeNavigationController else {
             fatalError("Unexpected navigation controller")
@@ -35,17 +42,40 @@ class SignUpViewController: UIViewController, UIPickerViewDelegate, UIPickerView
         personList = navigationController.personList
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        view.endEditing(true)
+    }
+    
+    //MARK: UITextFieldDelegate
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        
+        if textField == genderField, textField.text!.isEmpty {
+            textField.text = personList.genderTypes.first
+        }
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        
+        textField.resignFirstResponder()
+        return true
+    }
+    
     //MARK: UIPickerViewDataSource
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        
         return 1
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        
         return personList.genderTypes.count
     }
     
     func pickerView( _ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        
         return personList.genderTypes[row]
     }
     
@@ -53,7 +83,6 @@ class SignUpViewController: UIViewController, UIPickerViewDelegate, UIPickerView
     
     func pickerView( _ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         genderField.text = personList.genderTypes[row]
-        view.endEditing(true)
     }
 
     // MARK: - Navigation

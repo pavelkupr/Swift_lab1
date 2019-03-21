@@ -8,13 +8,14 @@
 
 import UIKit
 
-class EmployeeEditViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
+class EmployeeEditViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate {
 
     //MARK: Properties
     
     var personList: PersonList!
     var editPerson: Employee?
     var isImageChanged = false
+    let alertController = UIAlertController(title: "Are you sure?", message: "Delete current person?", preferredStyle: .alert)
     
     @IBOutlet weak var personImageView: UIImageView!
     @IBOutlet weak var nameField: UITextField!
@@ -24,9 +25,29 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
     @IBOutlet weak var genderField: FieldWithPicker!
     @IBOutlet weak var birthField: UITextField!
     @IBOutlet weak var infoView: UITextView!
+    @IBOutlet weak var emailField: UITextField!
+    @IBOutlet weak var saveBarButton: UIBarButtonItem!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let okAction = UIAlertAction(title: "Delete", style: UIAlertAction.Style.destructive) { UIAlertAction in
+            
+            if self.personList.currSignInUser == self.editPerson {
+                
+                self.personList.deletePerson(withInstance: self.editPerson!)
+                self.navigationController?.popViewController(animated: true)
+            }
+            else {
+                self.personList.deletePerson(withInstance: self.editPerson!)
+                self.navigationController?.popToRootViewController(animated: true)
+            }
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel)
+        
+        alertController.addAction(okAction)
+        alertController.addAction(cancelAction)
         
         infoView.layer.borderColor = UIColor.init(red: 220/255, green: 220/255, blue: 220/255, alpha: 1).cgColor
         infoView.layer.borderWidth = 1.0
@@ -35,6 +56,10 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
         deleteButton.isHidden = true
         
         genderField.picker.delegate = self
+        nameField.delegate = self
+        surnameField.delegate = self
+        genderField.delegate = self
+        emailField.delegate = self
         
         guard let navigationController = navigationController! as? EmployeeNavigationController else {
             fatalError("Unexpected navigation controller")
@@ -43,20 +68,48 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
         personList = navigationController.personList
         
         if let person = editPerson {
+            
             nameField.text = person.name
             surnameField.text = person.surname
             birthField.text = person.birthdate
             genderField.text = person.gender
+            emailField.text = person.email
+            infoView.text = person.info
             
             if let data = person.personImage {
                 personImageView.image = UIImage(data: data as Data)
             }
             
             if !person.isAdmin || person == personList.currSignInUser {
-               deleteButton.isHidden = false
+                deleteButton.isHidden = false
+            }
+            else {
+                saveBarButton.isEnabled = false
             }
         }
     }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        view.endEditing(true)
+    }
+    
+    //MARK: UITextFieldDelegate
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        
+        if textField == genderField, textField.text!.isEmpty {
+            textField.text = personList.genderTypes.first
+        }
+    }
+    
+    //MARK: UIImagePickerControllerDelegate
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
      
@@ -93,7 +146,6 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
     
     func pickerView( _ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         genderField.text = personList.genderTypes[row]
-        view.endEditing(true)
     }
     
     //MARK: Actions
@@ -108,7 +160,7 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
         
         if let person = editPerson {
             
-            if let error = personList.editPerson(withInstance: person, withName: nameField.text!, withSurname: surnameField.text!, withGender:  genderField.text!, withBirthdate:  birthField.text!, withImage: data) {
+            if let error = personList.editPerson(withInstance: person, withName: nameField.text!, withSurname: surnameField.text!, withGender:  genderField.text!, withBirthdate:  birthField.text!, withEmail: emailField.text!, withInfo: infoView.text!, withImage: data) {
                 errorLabel.text = error
             }
             else {
@@ -116,7 +168,7 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
             }
         }
         else {
-            if let error = personList.addNewPerson(withName: nameField.text!, withSurname: surnameField.text!, withGender: genderField.text!, withBirthdate: birthField.text!, withImage: data) {
+            if let error = personList.addNewPerson(withName: nameField.text!, withSurname: surnameField.text!, withGender: genderField.text!, withBirthdate: birthField.text!, withEmail: emailField.text!, withInfo: infoView.text!, withImage: data) {
                 errorLabel.text = error
             }
             else {
@@ -146,6 +198,11 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
             fatalError("This controller is not inside a navigation controller.")
         }
     }
+    
+    @IBAction func deletePerson(_ sender: UIButton) {
+        present(alertController, animated: true, completion: nil)
+    }
+    
     
     //MARK: Private Methods
     

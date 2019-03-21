@@ -26,7 +26,6 @@ class BirthField: UITextField {
     //MARK: Private methods
     private func connectDatePicker(){
         dateFormatter.dateFormat = "dd/MM/yyyy"
-        inputAccessoryView = UIToolbar().ToolbarPiker(mySelect: #selector(BirthField.dismissPicker))
         inputView = datePicker
         datePicker.datePickerMode = .date
         datePicker.addTarget(self, action: #selector(BirthField.dateChange(datePicker:)), for: .valueChanged)
@@ -35,11 +34,6 @@ class BirthField: UITextField {
     
     @objc private func dateChange(datePicker: UIDatePicker) {
         text = dateFormatter.string(from: datePicker.date)
-    }
-    
-    @objc private func dismissPicker() {
-        text = dateFormatter.string(from: datePicker.date)
-        resignFirstResponder()
     }
 
 }

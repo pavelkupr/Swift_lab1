@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SignInViewController: UIViewController {
+class SignInViewController: UIViewController, UITextFieldDelegate {
 
     //MARK: Properties
     
@@ -21,6 +21,9 @@ class SignInViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        emailField.delegate = self
+        passwordField.delegate = self
+        
         guard let navigationController = navigationController! as? EmployeeNavigationController else {
             fatalError("Unexpected navigation controller")
         }
@@ -30,10 +33,17 @@ class SignInViewController: UIViewController {
         // Do any additional setup after loading the view.
     }
     
-    //MARK: Actions
-    
-    @IBAction func logIn(_ sender: UIButton) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
+        view.endEditing(true)
+    }
+    
+    //MARK: UITextFieldDelegate
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        
+        textField.resignFirstResponder()
+        return true
     }
     
     // MARK: - Navigation

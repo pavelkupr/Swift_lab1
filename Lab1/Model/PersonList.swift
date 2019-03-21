@@ -34,6 +34,7 @@ class PersonList {
             "password":password,
             "gender":gender,
             "birthdate":birthdate,
+            "info":"Hey, everyone!",
             "isAdmin":true
         ]
         
@@ -47,9 +48,9 @@ class PersonList {
         return nil
     }
     
-    func addNewPerson(withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String, withImage image: Data?) -> String? {
+    func addNewPerson(withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String, withEmail email: String, withInfo info: String, withImage image: Data?) -> String? {
         
-        if let error = checkChangablePersonData(withName: name, withSurname: surname, withGender: gender, withBirthdate: birthdate) {
+        if let error = checkChangablePersonData(withName: name, withSurname: surname, withGender: gender, withBirthdate: birthdate, withEmail: email) {
             return error
         }
         
@@ -58,6 +59,8 @@ class PersonList {
             "surname":surname,
             "gender":gender,
             "birthdate":birthdate,
+            "email":email,
+            "info":info,
             "isAdmin":false
         ]
         
@@ -75,9 +78,9 @@ class PersonList {
         return nil
     }
     
-    func editPerson(withInstance person: Employee, withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String, withImage image: Data?) -> String? {
+    func editPerson(withInstance person: Employee, withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String, withEmail email: String, withInfo info: String, withImage image: Data?) -> String? {
         
-        if let error = checkChangablePersonData(withName: name, withSurname: surname, withGender: gender, withBirthdate: birthdate) {
+        if let error = checkChangablePersonData(withName: name, withSurname: surname, withGender: gender, withBirthdate: birthdate, withEmail: email) {
             return error
         }
         person.name = name
@@ -87,7 +90,9 @@ class PersonList {
             "name":name,
             "surname":surname,
             "gender":gender,
-            "birthdate":birthdate
+            "birthdate":birthdate,
+            "email":email,
+            "info":info
         ]
         
         if let img = image {
@@ -134,10 +139,11 @@ class PersonList {
         }
     }
     
-    private func checkChangablePersonData(withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String) -> String? {
+    private func checkChangablePersonData(withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String, withEmail email: String) -> String? {
         
         var error : String? = nil
         let datePredicate = NSPredicate(format:"SELF MATCHES %@", "[0-3][0-9]/[0-1][0-9]/[0-9]{4}")
+        let emailPredicate = NSPredicate(format:"SELF MATCHES %@", "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}")
         
         if name.count < 1 || surname.count < 1 {
             error = "Name and surname must contain 1 or more symbols."
@@ -151,12 +157,15 @@ class PersonList {
             error = (error == nil ? "Choose birthdate." : error! + "\nChoose birthdate.")
         }
         
+        if !emailPredicate.evaluate(with: email) {
+            error = (error == nil ? "E-mail must be correct." : error! + "\nE-mail must be correct.")
+        }
+        
         return error
     }
     
     private func checkAllPersonData(withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String, withEmail email: String, withPassword password: String, withPasswordRepeat passwordRepeat: String) -> String? {
         
-        let emailPredicate = NSPredicate(format:"SELF MATCHES %@", "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}")
         var error : String? = nil
 
         if password.count <= 7 {
@@ -167,11 +176,7 @@ class PersonList {
             error = (error == nil ? "Passwords must be equal." : error! + "\nPasswords must be equal.")
         }
         
-        if !emailPredicate.evaluate(with: email) {
-            error = (error == nil ? "E-mail must be correct." : error! + "\nE-mail must be correct.")
-        }
-        
-        if let errMsg = checkChangablePersonData(withName: name, withSurname: surname, withGender: gender, withBirthdate: birthdate) {
+        if let errMsg = checkChangablePersonData(withName: name, withSurname: surname, withGender: gender, withBirthdate: birthdate, withEmail: email) {
             error = (error == nil ? errMsg : error! + "\n" + errMsg)
         }
         
