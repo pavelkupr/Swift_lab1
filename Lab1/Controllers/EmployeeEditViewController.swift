@@ -31,7 +31,7 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let okAction = UIAlertAction(title: "Delete", style: UIAlertAction.Style.destructive) { UIAlertAction in
+        let okAction = UIAlertAction(title: "Delete", style: .destructive) { UIAlertAction in
             
             if self.personList.currSignInUser == self.editPerson {
                 
@@ -44,7 +44,7 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
             }
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         
         alertController.addAction(okAction)
         alertController.addAction(cancelAction)

@@ -26,7 +26,7 @@ class SignUpViewController: UIViewController, UIPickerViewDelegate, UIPickerView
     override func viewDidLoad() {
         
         super.viewDidLoad()
-
+        
         genderField.picker.delegate = self
         genderField.delegate = self
         nameField.delegate = self

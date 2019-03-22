@@ -15,6 +15,7 @@ class EmployeeTableViewCell: UITableViewCell {
     @IBOutlet weak var employeeImageView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var surnameLabel: UILabel!
+    @IBOutlet weak var userTypeField: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

@@ -23,6 +23,7 @@
 		3FC9E80122428AE300FFDDB7 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC9E80022428AE300FFDDB7 /* Extensions.swift */; };
 		3FFBE8272240F7ED00AA89DB /* EmployeeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FFBE8262240F7ED00AA89DB /* EmployeeTableViewCell.swift */; };
 		E927CC3D2240DBB300836441 /* EmployeesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E927CC3C2240DBB300836441 /* EmployeesTableViewController.swift */; };
+		E92BA3B72244E35200E68138 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92BA3B62244E35200E68138 /* CustomButton.swift */; };
 		E9C499262240443D00C2D550 /* Employee+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C499242240443D00C2D550 /* Employee+CoreDataClass.swift */; };
 		E9C499272240443D00C2D550 /* Employee+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C499252240443D00C2D550 /* Employee+CoreDataProperties.swift */; };
 		E9C4992B224047FE00C2D550 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C4992A224047FE00C2D550 /* CoreDataManager.swift */; };
@@ -48,6 +49,7 @@
 		3FC9E80022428AE300FFDDB7 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		3FFBE8262240F7ED00AA89DB /* EmployeeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeeTableViewCell.swift; sourceTree = "<group>"; };
 		E927CC3C2240DBB300836441 /* EmployeesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployeesTableViewController.swift; sourceTree = "<group>"; };
+		E92BA3B62244E35200E68138 /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
 		E9C499242240443D00C2D550 /* Employee+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Employee+CoreDataClass.swift"; sourceTree = "<group>"; };
 		E9C499252240443D00C2D550 /* Employee+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Employee+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		E9C4992A224047FE00C2D550 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
@@ -87,6 +89,16 @@
 				E9C49928224044DF00C2D550 /* Core Data */,
 				E9C499292240450300C2D550 /* Support Files */,
 				E9C4992E22405C6200C2D550 /* Model */,
+				E92BA3B82244FC9200E68138 /* Controllers */,
+				E92BA3B92244FCE800E68138 /* Custom Views */,
+				3FBAE81F223FA8EE00A4D8A5 /* Info.plist */,
+			);
+			path = Lab1;
+			sourceTree = "<group>";
+		};
+		E92BA3B82244FC9200E68138 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
 				3FBAE812223FA8ED00A4D8A5 /* ViewController.swift */,
 				3F030B00223FB7DD00B8BD4D /* SignInViewController.swift */,
 				E9C4992C22405C5500C2D550 /* SignUpViewController.swift */,
@@ -94,14 +106,19 @@
 				3FFBE8262240F7ED00AA89DB /* EmployeeTableViewCell.swift */,
 				3F31C99B2241177600E05A3F /* EmployeeEditViewController.swift */,
 				3FC9E7FE224260E900FFDDB7 /* EmployeeNavigationController.swift */,
-				3FC9E80022428AE300FFDDB7 /* Extensions.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		E92BA3B92244FCE800E68138 /* Custom Views */ = {
+			isa = PBXGroup;
+			children = (
 				3FA3652D22439E88006AE506 /* FieldWithPicker.swift */,
 				3FA3652922438B56006AE506 /* BirthField.swift */,
+				E92BA3B62244E35200E68138 /* CustomButton.swift */,
 				3FA3652B22439B3E006AE506 /* CircleImageView.swift */,
-				3FBAE814223FA8ED00A4D8A5 /* Main.storyboard */,
-				3FBAE81F223FA8EE00A4D8A5 /* Info.plist */,
 			);
-			path = Lab1;
+			path = "Custom Views";
 			sourceTree = "<group>";
 		};
 		E9C49928224044DF00C2D550 /* Core Data */ = {
@@ -118,9 +135,11 @@
 		E9C499292240450300C2D550 /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
+				3FC9E80022428AE300FFDDB7 /* Extensions.swift */,
 				3FBAE810223FA8ED00A4D8A5 /* AppDelegate.swift */,
 				3FBAE81A223FA8EE00A4D8A5 /* Assets.xcassets */,
 				3FBAE81C223FA8EE00A4D8A5 /* LaunchScreen.storyboard */,
+				3FBAE814223FA8ED00A4D8A5 /* Main.storyboard */,
 			);
 			path = "Support Files";
 			sourceTree = "<group>";
@@ -206,6 +225,7 @@
 			files = (
 				3FA3652C22439B3E006AE506 /* CircleImageView.swift in Sources */,
 				3F31C99C2241177600E05A3F /* EmployeeEditViewController.swift in Sources */,
+				E92BA3B72244E35200E68138 /* CustomButton.swift in Sources */,
 				3F030B01223FB7DD00B8BD4D /* SignInViewController.swift in Sources */,
 				3FBAE813223FA8ED00A4D8A5 /* ViewController.swift in Sources */,
 				3FA3652E22439E88006AE506 /* FieldWithPicker.swift in Sources */,

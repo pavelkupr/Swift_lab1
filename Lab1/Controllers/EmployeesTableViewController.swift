@@ -49,13 +49,15 @@ class EmployeesTableViewController: UITableViewController {
         
         cell.nameLabel.text = visualList[indexPath.row].name
         cell.surnameLabel.text = visualList[indexPath.row].surname
-
+        cell.userTypeField.text = visualList[indexPath.row].isAdmin ? "Admin" : "Employee"
+        
         if let data = visualList[indexPath.row].personImage {
             cell.employeeImageView.image = UIImage(data: data as Data)
         }
         else {
             cell.employeeImageView.image = UIImage(named: "Placeholder")
         }
+        
         
         return cell
     }
