@@ -51,17 +51,20 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         
         super.shouldPerformSegue(withIdentifier: identifier, sender: sender)
-
+        
         var result = false
         
         switch identifier {
+            
         case "TableViewSegueFromSignIn":
             if personList.signIn(withEmail: emailField.text!, withPassword: passwordField.text!) {
                 result = true
             }
             else {
-            errorLabel.text = "That user doesn't exist"
+                view.endEditing(true)
+                errorLabel.text = "That user doesn't exist"
             }
+            
         default:
             fatalError("Unexpected segue")
         }

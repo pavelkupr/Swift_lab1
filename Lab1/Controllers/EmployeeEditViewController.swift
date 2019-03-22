@@ -161,6 +161,7 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
         if let person = editPerson {
             
             if let error = personList.editPerson(withInstance: person, withName: nameField.text!, withSurname: surnameField.text!, withGender:  genderField.text!, withBirthdate:  birthField.text!, withEmail: emailField.text!, withInfo: infoView.text!, withImage: data) {
+                view.endEditing(true)
                 errorLabel.text = error
             }
             else {
@@ -169,6 +170,7 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
         }
         else {
             if let error = personList.addNewPerson(withName: nameField.text!, withSurname: surnameField.text!, withGender: genderField.text!, withBirthdate: birthField.text!, withEmail: emailField.text!, withInfo: infoView.text!, withImage: data) {
+                view.endEditing(true)
                 errorLabel.text = error
             }
             else {

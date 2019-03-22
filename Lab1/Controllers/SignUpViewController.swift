@@ -90,11 +90,15 @@ class SignUpViewController: UIViewController, UIPickerViewDelegate, UIPickerView
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
         
         super.shouldPerformSegue(withIdentifier: identifier, sender: sender)
+
         var result = true
         
         switch identifier {
+            
         case "TableViewSegue":
             if let error = personList?.addNewAdmin(withName: nameField.text!, withSurname: surnameField.text!, withGender:  genderField.text!, withBirthdate: birthField.text!, withEmail: emailField.text!, withPassword: passwordField.text!, withPasswordRepeat: passwordRepeatField.text!) {
+                
+                view.endEditing(true)
                 errorLabel.text = error
                 result = false
             }
