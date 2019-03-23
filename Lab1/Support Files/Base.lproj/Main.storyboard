@@ -279,7 +279,7 @@
             </objects>
             <point key="canvasLocation" x="1920.8" y="813.64317841079469"/>
         </scene>
-        <!--Edit-->
+        <!--Employee-->
         <scene sceneID="LnS-t9-dlW">
             <objects>
                 <viewController id="hCB-Oq-OE6" customClass="EmployeeEditViewController" customModule="Lab1" customModuleProvider="target" sceneMemberID="viewController">
@@ -394,7 +394,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="hsS-dR-aOk"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Edit" id="lTn-zG-6FG">
+                    <navigationItem key="navigationItem" title="Employee" id="lTn-zG-6FG">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="qtD-EU-MQT">
                             <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <connections>
@@ -411,6 +411,7 @@
                     <connections>
                         <outlet property="birthField" destination="JzQ-Cn-Ggy" id="Kvu-fz-S47"/>
                         <outlet property="deleteButton" destination="rOV-h5-KiO" id="LGv-ip-Gum"/>
+                        <outlet property="editNavItem" destination="lTn-zG-6FG" id="hHI-nR-gzT"/>
                         <outlet property="emailField" destination="0Ec-Me-ntb" id="BtS-5X-gnN"/>
                         <outlet property="errorLabel" destination="eDf-td-YmS" id="lTv-7O-kcU"/>
                         <outlet property="genderField" destination="rQW-yY-quI" id="u7E-5M-UAw"/>

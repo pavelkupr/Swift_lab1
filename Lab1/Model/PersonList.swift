@@ -160,6 +160,9 @@ class PersonList {
         if !emailPredicate.evaluate(with: email) {
             error = (error == nil ? "E-mail must be correct." : error! + "\nE-mail must be correct.")
         }
+        else if employees.contains(where: {$0.email == email}) {
+            error = (error == nil ? "E-mail already exists." : error! + "\nE-mail already exists.")
+        }
         
         return error
     }

@@ -27,6 +27,7 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
     @IBOutlet weak var infoView: UITextView!
     @IBOutlet weak var emailField: UITextField!
     @IBOutlet weak var saveBarButton: UIBarButtonItem!
+    @IBOutlet weak var editNavItem: UINavigationItem!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,11 +37,11 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
             if self.personList.currSignInUser == self.editPerson {
                 
                 self.personList.deletePerson(withInstance: self.editPerson!)
-                self.navigationController?.popViewController(animated: true)
+                self.navigationController?.popToRootViewController(animated: true)
             }
             else {
                 self.personList.deletePerson(withInstance: self.editPerson!)
-                self.navigationController?.popToRootViewController(animated: true)
+                self.navigationController?.popViewController(animated: true)
             }
         }
         
@@ -76,6 +77,10 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
             emailField.text = person.email
             infoView.text = person.info
             
+            if person.isAdmin {
+                editNavItem.title = "Admin"
+            }
+            
             if let data = person.personImage {
                 personImageView.image = UIImage(data: data as Data)
             }
@@ -85,6 +90,13 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
             }
             else {
                 saveBarButton.isEnabled = false
+                nameField.isUserInteractionEnabled = false
+                surnameField.isUserInteractionEnabled = false
+                birthField.isUserInteractionEnabled = false
+                genderField.isUserInteractionEnabled = false
+                emailField.isUserInteractionEnabled = false
+                infoView.isUserInteractionEnabled = false
+                personImageView.isUserInteractionEnabled = false
             }
         }
     }
