@@ -23,7 +23,7 @@ class PersonList {
     
     func addNewAdmin(withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String, withEmail email: String, withPassword password: String, withPasswordRepeat passwordRepeat: String) -> String? {
         
-        if let error = checkPersonDataForAdd(withName: name, withSurname: surname, withGender: gender, withBirthdate: birthdate, withEmail: email, withPassword: password, withPasswordRepeat: passwordRepeat){
+        if let error = checkAdminData(withName: name, withSurname: surname, withGender: gender, withBirthdate: birthdate, withEmail: email, withPassword: password, withPasswordRepeat: passwordRepeat){
             return error
         }
         
@@ -50,7 +50,7 @@ class PersonList {
     
     func addNewPerson(withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String, withEmail email: String, withInfo info: String, withImage image: Data?) -> String? {
         
-        if let error = checkPersonDataForEdit(withName: name, withSurname: surname, withGender: gender, withBirthdate: birthdate, withEmail: email) {
+        if let error = checkPersonData(withInstance: nil, withName: name, withSurname: surname, withGender: gender, withBirthdate: birthdate, withEmail: email) {
             return error
         }
         
@@ -80,7 +80,7 @@ class PersonList {
     
     func editPerson(withInstance person: Employee, withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String, withEmail email: String, withInfo info: String, withImage image: Data?) -> String? {
         
-        if let error = checkPersonDataForEdit(withName: name, withSurname: surname, withGender: gender, withBirthdate: birthdate, withEmail: email) {
+        if let error = checkPersonData(withInstance: person, withName: name, withSurname: surname, withGender: gender, withBirthdate: birthdate, withEmail: email) {
             return error
         }
         person.name = name
@@ -139,7 +139,7 @@ class PersonList {
         }
     }
     
-    private func checkPersonDataForEdit(withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String, withEmail email: String) -> String? {
+    private func checkPersonData(withInstance person: Employee?, withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String, withEmail email: String) -> String? {
         
         var error : String? = nil
         let datePredicate = NSPredicate(format:"SELF MATCHES %@", "[0-3][0-9]/[0-1][0-9]/[0-9]{4}")
@@ -160,11 +160,14 @@ class PersonList {
         if !emailPredicate.evaluate(with: email) {
             error = (error == nil ? "E-mail must be correct." : error! + "\nE-mail must be correct.")
         }
+        else if (person == nil || person?.email != email) && employees.contains(where: {$0.email == email}) {
+            error = (error == nil ? "E-mail already exists." : error! + "\nE-mail already exists.")
+        }
         
         return error
     }
     
-    private func checkPersonDataForAdd(withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String, withEmail email: String, withPassword password: String, withPasswordRepeat passwordRepeat: String) -> String? {
+    private func checkAdminData(withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String, withEmail email: String, withPassword password: String, withPasswordRepeat passwordRepeat: String) -> String? {
         
         var error : String? = nil
 
@@ -176,11 +179,7 @@ class PersonList {
             error = (error == nil ? "Passwords must be equal." : error! + "\nPasswords must be equal.")
         }
         
-        if employees.contains(where: {$0.email == email}) {
-            error = (error == nil ? "E-mail already exists." : error! + "\nE-mail already exists.")
-        }
-        
-        if let errMsg = checkPersonDataForEdit(withName: name, withSurname: surname, withGender: gender, withBirthdate: birthdate, withEmail: email) {
+        if let errMsg = checkPersonData(withInstance: nil, withName: name, withSurname: surname, withGender: gender, withBirthdate: birthdate, withEmail: email) {
             error = (error == nil ? errMsg : error! + "\n" + errMsg)
         }
         
