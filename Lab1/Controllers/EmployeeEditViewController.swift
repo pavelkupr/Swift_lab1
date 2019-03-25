@@ -15,6 +15,8 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
     var personList: PersonList!
     var editPerson: Employee?
     var isImageChanged = false
+    var isKeyboardShowed = false
+    let spacing: CGFloat = CGFloat(8)
     let alertController = UIAlertController(title: "Are you sure?", message: "Delete current person?", preferredStyle: .alert)
     
     @IBOutlet weak var personImageView: UIImageView!
@@ -31,6 +33,9 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         
         let okAction = UIAlertAction(title: "Delete", style: .destructive) { UIAlertAction in
             
@@ -98,6 +103,30 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
                 infoView.isUserInteractionEnabled = false
                 personImageView.isUserInteractionEnabled = false
             }
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue, let responder = view.firstResponder, !isKeyboardShowed {
+            
+            guard let respCoord = responder.getCoordRelative(toView: view) else {
+                fatalError()
+            }
+            let shift = (respCoord.y + responder.bounds.height + spacing) - keyboardSize.origin.y
+            view.frame.origin.y -= shift > 0 ? shift : 0
+            isKeyboardShowed = true
+        }
+    }
+    
+    @objc func keyboardWillHide(notification: NSNotification) {
+        if isKeyboardShowed {
+            self.view.frame.origin.y = 0
+            isKeyboardShowed = false
         }
     }
     
@@ -217,8 +246,4 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
         present(alertController, animated: true, completion: nil)
     }
     
-    
-    //MARK: Private Methods
-    
-
 }
