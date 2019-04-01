@@ -5,11 +5,10 @@
 //  Created by student on 3/21/19.
 //  Copyright © 2019 student. All rights reserved.
 //
-
 import UIKit
 
 class CircleImageView: UIImageView {
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         createCircle()

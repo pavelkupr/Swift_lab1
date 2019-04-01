@@ -49,7 +49,14 @@ class EmployeesTableViewController: UITableViewController {
         
         cell.nameLabel.text = visualList[indexPath.row].name
         cell.surnameLabel.text = visualList[indexPath.row].surname
-        cell.userTypeField.text = visualList[indexPath.row].isAdmin ? "Admin" : "Employee"
+        cell.genderLabel.text = "Gender: "+visualList[indexPath.row].gender!
+        cell.ageLabel.text = "Age: "+String(getAge(birthDate: visualList[indexPath.row].birthdate!))
+        if visualList[indexPath.row] == personList.currSignInUser {
+            cell.userTypeField.text = "Current Admin"
+        }
+        else {
+            cell.userTypeField.text = visualList[indexPath.row].isAdmin ? "Admin" : "Employee"
+        }
         
         if let data = visualList[indexPath.row].personImage {
             cell.employeeImageView.image = UIImage(data: data as Data)
@@ -131,5 +138,16 @@ class EmployeesTableViewController: UITableViewController {
         visualList += personList.employees.filter { !$0.isAdmin }
         
         tableView.reloadData()
+    }
+    
+    private func getAge(birthDate: String) -> Int {
+        let now = Date()
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd/MM/yyyy"
+        let birthday = dateFormatter.date(from: birthDate)
+        let calendar = Calendar.current
+        
+        return calendar.dateComponents([.year], from: birthday!, to: now).year!
     }
 }
