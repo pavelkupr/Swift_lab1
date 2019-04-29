@@ -122,10 +122,10 @@ class SignUpViewController: UIViewController, UIPickerViewDelegate, UIPickerView
         switch(segue.identifier ?? "") {
             
         case "TableViewSegue":
-            guard segue.destination as? EmployeesTableViewController != nil else {
+            guard let dest = segue.destination as? EmployeeSplitViewController else {
                 fatalError("Unexpected destination \(segue.destination)")
             }
-            
+            dest.personList = personList
         default:
             fatalError("Unexpected segue")
             

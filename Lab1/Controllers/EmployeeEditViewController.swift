@@ -28,8 +28,8 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
     @IBOutlet weak var birthField: UITextField!
     @IBOutlet weak var infoView: UITextView!
     @IBOutlet weak var emailField: UITextField!
-    @IBOutlet weak var saveBarButton: UIBarButtonItem!
     @IBOutlet weak var editNavItem: UINavigationItem!
+    @IBOutlet weak var saveButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,11 +67,11 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
         genderField.delegate = self
         emailField.delegate = self
         
-        guard let navigationController = navigationController! as? EmployeeNavigationController else {
+        guard let splitController = splitViewController! as? EmployeeSplitViewController else {
             fatalError("Unexpected navigation controller")
         }
         
-        personList = navigationController.personList
+        personList = splitController.personList
         
         if let person = editPerson {
             
@@ -94,7 +94,7 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
                 deleteButton.isHidden = false
             }
             else {
-                saveBarButton.isEnabled = false
+                saveButton.isHidden = false
                 nameField.isUserInteractionEnabled = false
                 surnameField.isUserInteractionEnabled = false
                 birthField.isUserInteractionEnabled = false
@@ -191,7 +191,8 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
     
     //MARK: Actions
     
-    @IBAction func saveChanges(_ sender: UIBarButtonItem) {
+
+    @IBAction func saveChanges(_ sender: UIButton) {
         
         var data: Data? = nil
         
@@ -230,16 +231,6 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
         
         imagePickerController.delegate = self
         present(imagePickerController, animated: true, completion: nil)
-    }
-    
-    @IBAction func cancel(_ sender: UIBarButtonItem) {
-        
-        if let owningNavigationController = navigationController {
-            owningNavigationController.popViewController(animated: true)
-        }
-        else {
-            fatalError("This controller is not inside a navigation controller.")
-        }
     }
     
     @IBAction func deletePerson(_ sender: UIButton) {

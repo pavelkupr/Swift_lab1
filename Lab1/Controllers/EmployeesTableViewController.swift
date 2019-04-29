@@ -13,16 +13,16 @@ class EmployeesTableViewController: UITableViewController {
     //MARK: Properties
     
     var personList: PersonList!
-    var visualList: [User]!
+    var visualList: [User] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        guard let navigationController = navigationController! as? EmployeeNavigationController else {
+        guard let splitController = splitViewController! as? EmployeeSplitViewController else {
             fatalError("Unexpected navigation controller")
         }
         
-        personList = navigationController.personList
+        personList = splitController.personList
     }
     
     override func viewWillAppear(_ animated: Bool) {
