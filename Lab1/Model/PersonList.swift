@@ -7,13 +7,14 @@
 //
 
 import Foundation
+import Firebase
 
 class PersonList {
     
     //MARK: Properties
-    private(set) var employees: [Employee]!
+    private(set) var employees = [User]()
     
-    private(set) var currSignInUser: Employee?
+    private(set) var currSignInUser: User?
     
     let genderTypes = ["Male", "Female", "Other"]
     
@@ -27,23 +28,31 @@ class PersonList {
             return error
         }
         
-        let props: [String: Any] = [
-            "name":name,
-            "surname":surname,
-            "email":email,
-            "password":password,
-            "gender":gender,
-            "birthdate":birthdate,
-            "info":"Hey, everyone!",
-            "isAdmin":true
-        ]
+        let newDocument = email
+        (UIApplication.shared.delegate as! AppDelegate).db.collection("users").document(newDocument).setData([
+            "user_name": name,
+            "user_surname": surname,
+            "user_gender": gender,
+            "user_date_of_birth": birthdate,
+            "user_email": email,
+            "user_password": password,
+            "user_about": "Hey, everyone!",
+            "user_is_admin": true
+        ]) { err in
+            if let err = err {
+                print("Error writing document: \(err)")
+            }
+        }
         
-        if let employee = CoreDataManager.instance.addNewObject(withEntityName: "Employee", withProperties: props) as? Employee {
-            employees.append(employee)
-        }
-        else {
-            fatalError("Can't cast data from storage")
-        }
+        employees.append(User(email: email,
+             gender: gender,
+             info: "Hey, everyone!",
+             isAdmin: true,
+             name: name,
+             password: password,
+             personImage: nil,
+             surname: surname,
+             birthdate: birthdate))
         
         return nil
     }
@@ -53,67 +62,139 @@ class PersonList {
         if let error = checkPersonData(withInstance: nil, withName: name, withSurname: surname, withGender: gender, withBirthdate: birthdate, withEmail: email) {
             return error
         }
-        
-        var props: [String: Any] = [
-            "name":name,
-            "surname":surname,
-            "gender":gender,
-            "birthdate":birthdate,
-            "email":email,
-            "info":info,
-            "isAdmin":false
-        ]
-        
+
+        let newDocument = email
         if let img = image {
-            props["personImage"] = img
+            (UIApplication.shared.delegate as! AppDelegate).db.collection("users").document(newDocument).setData([
+                "user_name": name,
+                "user_surname": surname,
+                "user_gender": gender,
+                "user_date_of_birth": birthdate,
+                "user_email": email,
+                "user_about": info,
+                "user_image": img,
+                "user_is_admin": false
+            ]) { err in
+                if let err = err {
+                    print("Error writing document: \(err)")
+                }
+            }
+        } else {
+            (UIApplication.shared.delegate as! AppDelegate).db.collection("users").document(newDocument).setData([
+                "user_name": name,
+                "user_surname": surname,
+                "user_gender": gender,
+                "user_date_of_birth": birthdate,
+                "user_email": email,
+                "user_about": info,
+                "user_is_admin": false
+            ]) { err in
+                if let err = err {
+                    print("Error writing document: \(err)")
+                }
+            }
         }
         
-        if let employee = CoreDataManager.instance.addNewObject(withEntityName: "Employee", withProperties: props) as? Employee {
-            employees.append(employee)
-        }
-        else {
-            fatalError("Can't cast data from storage")
-        }
-        
+        employees.append(User(email: email,
+                              gender: gender,
+                              info: "Hey, everyone!",
+                              isAdmin: true,
+                              name: name,
+                              password: nil,
+                              personImage: image == nil ? nil : NSData(data: image!),
+                              surname: surname,
+                              birthdate: birthdate))
+
         return nil
     }
     
-    func editPerson(withInstance person: Employee, withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String, withEmail email: String, withInfo info: String, withImage image: Data?) -> String? {
+    func editPerson(withInstance person: User, withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String, withEmail email: String, withInfo info: String, withImage image: Data?) -> String? {
         
         if let error = checkPersonData(withInstance: person, withName: name, withSurname: surname, withGender: gender, withBirthdate: birthdate, withEmail: email) {
             return error
         }
-        person.name = name
-        person.surname = surname
-        
-        var props: [String:Any] = [
-            "name":name,
-            "surname":surname,
-            "gender":gender,
-            "birthdate":birthdate,
-            "email":email,
-            "info":info
-        ]
-        
-        if let img = image {
-            props["personImage"] = img
-            person.personImage = img as NSData
+        (UIApplication.shared.delegate as! AppDelegate).db.collection("users").document(person.email).delete()
+        let newDocument = email
+        if person.isAdmin {
+            if let img = image {
+                (UIApplication.shared.delegate as! AppDelegate).db.collection("users").document(newDocument).setData([
+                    "user_name": name,
+                    "user_surname": surname,
+                    "user_gender": gender,
+                    "user_date_of_birth": birthdate,
+                    "user_email": email,
+                    "user_about": info,
+                    "user_image": img,
+                    "user_password": person.password!,
+                    "user_is_admin": true
+                ]) { err in
+                    if let err = err {
+                        print("Error writing document: \(err)")
+                    }
+                }
+            } else {
+                (UIApplication.shared.delegate as! AppDelegate).db.collection("users").document(newDocument).setData([
+                    "user_name": name,
+                    "user_surname": surname,
+                    "user_gender": gender,
+                    "user_date_of_birth": birthdate,
+                    "user_email": email,
+                    "user_about": info,
+                    "user_password": person.password!,
+                    "user_is_admin": true
+                ]) { err in
+                    if let err = err {
+                        print("Error writing document: \(err)")
+                    }
+                }
+            }
+        } else {
+            if let img = image {
+                (UIApplication.shared.delegate as! AppDelegate).db.collection("users").document(newDocument).setData([
+                    "user_name": name,
+                    "user_surname": surname,
+                    "user_gender": gender,
+                    "user_date_of_birth": birthdate,
+                    "user_email": email,
+                    "user_about": info,
+                    "user_image": img,
+                    "user_is_admin": false
+                ]) { err in
+                    if let err = err {
+                        print("Error writing document: \(err)")
+                    }
+                }
+            } else {
+                (UIApplication.shared.delegate as! AppDelegate).db.collection("users").document(newDocument).setData([
+                    "user_name": name,
+                    "user_surname": surname,
+                    "user_gender": gender,
+                    "user_date_of_birth": birthdate,
+                    "user_email": email,
+                    "user_about": info,
+                    "user_is_admin": false
+                ]) { err in
+                    if let err = err {
+                        print("Error writing document: \(err)")
+                    }
+                }
+            }
         }
-        
-        CoreDataManager.instance.editObject(withInstance: person, withProperties: props)
+      person.email = email
+      person.gender = gender
+      person.info = info
+      person.name = name
+      person.personImage = image == nil ? nil : NSData(data: image!)
+      person.surname = surname
+      person.birthdate = birthdate
         
         return nil
     }
     
-    func deletePerson(withInstance person: Employee) {
+    func deletePerson(withInstance person: User) {
         
-        CoreDataManager.instance.deleteObject(withInstance: person)
-        
-        guard let index = employees.firstIndex(of: person) else {
-            fatalError("Array doesn't contain \(person)")
-        }
-        
-        employees.remove(at: index)
+        (UIApplication.shared.delegate as! AppDelegate).db.collection("users").document(person.email).delete()
+        employees.removeAll{$0.email == person.email}
     }
     
     func signIn(withEmail email: String, withPassword pass: String) -> Bool {
@@ -131,15 +212,32 @@ class PersonList {
     //MARK: Private Methods
     
     private func loadData() {
-        if let employees = CoreDataManager.instance.loadData(withEntityName: "Employee") as? [Employee] {
-            self.employees = employees
-        }
-        else {
-            fatalError("Can't cast data from storage")
+        
+        (UIApplication.shared.delegate as! AppDelegate).db.collection("users").addSnapshotListener { querySnapshot, error in
+            guard let documents = querySnapshot?.documents else {
+                print("Error fetching documents: \(error!)")
+                return
+            }
+            
+            self.employees.removeAll()
+            print("Doc count - \(documents.count)")
+            for document in documents {
+                if document.exists {
+                    self.employees.append(User(email: document.get("user_email") as! String,
+                                          gender: document.get("user_gender") as! String,
+                                          info: document.get("user_about") as! String,
+                                          isAdmin: document.get("user_is_admin") as! Bool,
+                                          name: document.get("user_name") as! String,
+                                          password: document.get("user_password") as? String,
+                                          personImage: document.get("user_image") as? NSData,
+                                          surname: document.get("user_surname") as! String,
+                                          birthdate: document.get("user_date_of_birth") as! String))
+                }
+            }
         }
     }
     
-    private func checkPersonData(withInstance person: Employee?, withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String, withEmail email: String) -> String? {
+    private func checkPersonData(withInstance person: User?, withName name: String, withSurname surname: String, withGender gender: String, withBirthdate birthdate: String, withEmail email: String) -> String? {
         
         var error : String? = nil
         let datePredicate = NSPredicate(format:"SELF MATCHES %@", "[0-3][0-9]/[0-1][0-9]/[0-9]{4}")

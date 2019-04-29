@@ -13,7 +13,7 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
     //MARK: Properties
     
     var personList: PersonList!
-    var editPerson: Employee?
+    var editPerson: User?
     var isImageChanged = false
     var isKeyboardShowed = false
     let spacing: CGFloat = CGFloat(8)
@@ -39,7 +39,7 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
         
         let okAction = UIAlertAction(title: "Delete", style: .destructive) { UIAlertAction in
             
-            if self.personList.currSignInUser == self.editPerson {
+            if self.personList.currSignInUser?.email == self.editPerson?.email {
                 
                 self.personList.deletePerson(withInstance: self.editPerson!)
                 self.navigationController?.popToRootViewController(animated: true)
@@ -90,7 +90,7 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
                 personImageView.image = UIImage(data: data as Data)
             }
             
-            if !person.isAdmin || person == personList.currSignInUser {
+            if !person.isAdmin || person.email == personList.currSignInUser?.email {
                 deleteButton.isHidden = false
             }
             else {

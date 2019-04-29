@@ -55,9 +55,13 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
         var result = false
         
         switch identifier {
+        case "SignUp":
+            result = true
             
         case "TableViewSegueFromSignIn":
             if personList.signIn(withEmail: emailField.text!, withPassword: passwordField.text!) {
+                emailField.text = ""
+                passwordField.text = ""
                 result = true
             }
             else {
@@ -77,6 +81,10 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
         super.prepare(for: segue, sender: sender)
         
         switch(segue.identifier ?? "") {
+        case "SignUp":
+            guard segue.destination as? SignUpViewController != nil else {
+                fatalError("Unexpected destination \(segue.destination)")
+            }
             
         case "TableViewSegueFromSignIn":
             guard segue.destination as? EmployeesTableViewController != nil else {

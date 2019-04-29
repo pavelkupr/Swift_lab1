@@ -13,7 +13,7 @@ class EmployeesTableViewController: UITableViewController {
     //MARK: Properties
     
     var personList: PersonList!
-    var visualList: [Employee]!
+    var visualList: [User]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,9 +49,9 @@ class EmployeesTableViewController: UITableViewController {
         
         cell.nameLabel.text = visualList[indexPath.row].name
         cell.surnameLabel.text = visualList[indexPath.row].surname
-        cell.genderLabel.text = "Gender: "+visualList[indexPath.row].gender!
-        cell.ageLabel.text = "Age: "+String(getAge(birthDate: visualList[indexPath.row].birthdate!))
-        if visualList[indexPath.row] == personList.currSignInUser {
+        cell.genderLabel.text = "Gender: "+visualList[indexPath.row].gender
+        cell.ageLabel.text = "Age: "+String(getAge(birthDate: visualList[indexPath.row].birthdate))
+        if visualList[indexPath.row].email == personList.currSignInUser?.email {
             cell.userTypeField.text = "Current Admin"
         }
         else {
@@ -134,7 +134,7 @@ class EmployeesTableViewController: UITableViewController {
         
         visualList = [personList.currSignInUser!]
 
-        visualList += personList.employees.filter { $0 != personList.currSignInUser && $0.isAdmin }
+        visualList += personList.employees.filter { $0.email != personList.currSignInUser?.email && $0.isAdmin }
         visualList += personList.employees.filter { !$0.isAdmin }
         
         tableView.reloadData()
