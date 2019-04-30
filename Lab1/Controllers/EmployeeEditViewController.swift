@@ -30,6 +30,7 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
     @IBOutlet weak var emailField: UITextField!
     @IBOutlet weak var editNavItem: UINavigationItem!
     @IBOutlet weak var saveButton: UIButton!
+    @IBOutlet weak var scrollView: UIScrollView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,7 +43,7 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
             if self.personList.currSignInUser?.email == self.editPerson?.email {
                 
                 self.personList.deletePerson(withInstance: self.editPerson!)
-                self.navigationController?.popToRootViewController(animated: true)
+                self.dismiss(animated: true, completion: nil)
             }
             else {
                 self.personList.deletePerson(withInstance: self.editPerson!)
@@ -94,7 +95,7 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
                 deleteButton.isHidden = false
             }
             else {
-                saveButton.isHidden = false
+                saveButton.isHidden = true
                 nameField.isUserInteractionEnabled = false
                 surnameField.isUserInteractionEnabled = false
                 birthField.isUserInteractionEnabled = false
@@ -117,7 +118,8 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
             guard let respCoord = responder.getCoordRelative(toView: view) else {
                 fatalError()
             }
-            let shift = (respCoord.y + responder.bounds.height + spacing) - keyboardSize.origin.y
+            
+            let shift = (respCoord.y + responder.bounds.height + spacing - scrollView.contentOffset.y) - keyboardSize.origin.y
             view.frame.origin.y -= shift > 0 ? shift : 0
             isKeyboardShowed = true
         }

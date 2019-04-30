@@ -125,7 +125,7 @@ class EmployeesTableViewController: UITableViewController {
     //MARK: Actions
     
     @IBAction func logOut(_ sender: UIBarButtonItem) {
-        navigationController?.popToRootViewController(animated: true)
+        dismiss(animated: true, completion: nil)
     }
     
     //MARK: Private
