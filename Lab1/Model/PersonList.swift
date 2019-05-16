@@ -29,7 +29,7 @@ class PersonList {
         }
         
         let newDocument = email
-        (UIApplication.shared.delegate as! AppDelegate).db.collection("users").document(newDocument).setData([
+        (UIApplication.shared.delegate as! AppDelegate).db.collection("employees").document(newDocument).setData([
             "user_name": name,
             "user_surname": surname,
             "user_gender": gender,
@@ -64,41 +64,42 @@ class PersonList {
         }
 
         let newDocument = email
-        if let img = image {
-            (UIApplication.shared.delegate as! AppDelegate).db.collection("users").document(newDocument).setData([
-                "user_name": name,
-                "user_surname": surname,
-                "user_gender": gender,
-                "user_date_of_birth": birthdate,
-                "user_email": email,
-                "user_about": info,
-                "user_image": img,
-                "user_is_admin": false
-            ]) { err in
-                if let err = err {
-                    print("Error writing document: \(err)")
+        uploadPictureToStorage(data: image, name: email) { url in
+            if let url = url {
+                (UIApplication.shared.delegate as! AppDelegate).db.collection("employees").document(newDocument).setData([
+                    "user_name": name,
+                    "user_surname": surname,
+                    "user_gender": gender,
+                    "user_date_of_birth": birthdate,
+                    "user_email": email,
+                    "user_about": info,
+                    "user_image": url,
+                    "user_is_admin": false
+                ]) { err in
+                    if let err = err {
+                        print("Error writing document: \(err)")
+                    }
                 }
-            }
-        } else {
-            (UIApplication.shared.delegate as! AppDelegate).db.collection("users").document(newDocument).setData([
-                "user_name": name,
-                "user_surname": surname,
-                "user_gender": gender,
-                "user_date_of_birth": birthdate,
-                "user_email": email,
-                "user_about": info,
-                "user_is_admin": false
-            ]) { err in
-                if let err = err {
-                    print("Error writing document: \(err)")
+            } else {
+                (UIApplication.shared.delegate as! AppDelegate).db.collection("employees").document(newDocument).setData([
+                    "user_name": name,
+                    "user_surname": surname,
+                    "user_gender": gender,
+                    "user_date_of_birth": birthdate,
+                    "user_email": email,
+                    "user_about": info,
+                    "user_is_admin": false
+                ]) { err in
+                    if let err = err {
+                        print("Error writing document: \(err)")
+                    }
                 }
             }
         }
-        
         employees.append(User(email: email,
                               gender: gender,
                               info: "Hey, everyone!",
-                              isAdmin: true,
+                              isAdmin: false,
                               name: name,
                               password: nil,
                               personImage: image == nil ? nil : NSData(data: image!),
@@ -113,18 +114,19 @@ class PersonList {
         if let error = checkPersonData(withInstance: person, withName: name, withSurname: surname, withGender: gender, withBirthdate: birthdate, withEmail: email) {
             return error
         }
-        (UIApplication.shared.delegate as! AppDelegate).db.collection("users").document(person.email).delete()
+        (UIApplication.shared.delegate as! AppDelegate).db.collection("employees").document(person.email).delete()
         let newDocument = email
+        uploadPictureToStorage(data: image, name: email) { url in
         if person.isAdmin {
-            if let img = image {
-                (UIApplication.shared.delegate as! AppDelegate).db.collection("users").document(newDocument).setData([
+            if let url = url {
+                (UIApplication.shared.delegate as! AppDelegate).db.collection("employees").document(newDocument).setData([
                     "user_name": name,
                     "user_surname": surname,
                     "user_gender": gender,
                     "user_date_of_birth": birthdate,
                     "user_email": email,
                     "user_about": info,
-                    "user_image": img,
+                    "user_image": url,
                     "user_password": person.password!,
                     "user_is_admin": true
                 ]) { err in
@@ -133,7 +135,7 @@ class PersonList {
                     }
                 }
             } else {
-                (UIApplication.shared.delegate as! AppDelegate).db.collection("users").document(newDocument).setData([
+                (UIApplication.shared.delegate as! AppDelegate).db.collection("employees").document(newDocument).setData([
                     "user_name": name,
                     "user_surname": surname,
                     "user_gender": gender,
@@ -149,15 +151,15 @@ class PersonList {
                 }
             }
         } else {
-            if let img = image {
-                (UIApplication.shared.delegate as! AppDelegate).db.collection("users").document(newDocument).setData([
+            if let url = url {
+                (UIApplication.shared.delegate as! AppDelegate).db.collection("employees").document(newDocument).setData([
                     "user_name": name,
                     "user_surname": surname,
                     "user_gender": gender,
                     "user_date_of_birth": birthdate,
                     "user_email": email,
                     "user_about": info,
-                    "user_image": img,
+                    "user_image": url,
                     "user_is_admin": false
                 ]) { err in
                     if let err = err {
@@ -165,7 +167,7 @@ class PersonList {
                     }
                 }
             } else {
-                (UIApplication.shared.delegate as! AppDelegate).db.collection("users").document(newDocument).setData([
+                (UIApplication.shared.delegate as! AppDelegate).db.collection("employees").document(newDocument).setData([
                     "user_name": name,
                     "user_surname": surname,
                     "user_gender": gender,
@@ -180,6 +182,7 @@ class PersonList {
                 }
             }
         }
+    }
       person.email = email
       person.gender = gender
       person.info = info
@@ -193,7 +196,7 @@ class PersonList {
     
     func deletePerson(withInstance person: User) {
         
-        (UIApplication.shared.delegate as! AppDelegate).db.collection("users").document(person.email).delete()
+        (UIApplication.shared.delegate as! AppDelegate).db.collection("employees").document(person.email).delete()
         employees.removeAll{$0.email == person.email}
     }
     
@@ -213,25 +216,39 @@ class PersonList {
     
     private func loadData() {
         
-        (UIApplication.shared.delegate as! AppDelegate).db.collection("users").addSnapshotListener { querySnapshot, error in
+        (UIApplication.shared.delegate as! AppDelegate).db.collection("employees").addSnapshotListener { querySnapshot, error in
             guard let documents = querySnapshot?.documents else {
                 print("Error fetching documents: \(error!)")
                 return
             }
-            
+            //Storage
             self.employees.removeAll()
             print("Doc count - \(documents.count)")
             for document in documents {
                 if document.exists {
-                    self.employees.append(User(email: document.get("user_email") as! String,
-                                          gender: document.get("user_gender") as! String,
-                                          info: document.get("user_about") as! String,
-                                          isAdmin: document.get("user_is_admin") as! Bool,
-                                          name: document.get("user_name") as! String,
-                                          password: document.get("user_password") as? String,
-                                          personImage: document.get("user_image") as? NSData,
-                                          surname: document.get("user_surname") as! String,
-                                          birthdate: document.get("user_date_of_birth") as! String))
+                    if let url = document.get("user_image") as? String, let URL = URL(string: url) {
+                        self.getData(from: URL) { data, response, error in
+                            self.employees.append(User(email: document.get("user_email") as! String,
+                                                       gender: document.get("user_gender") as! String,
+                                                       info: document.get("user_about") as! String,
+                                                       isAdmin: document.get("user_is_admin") as! Bool,
+                                                       name: document.get("user_name") as! String,
+                                                       password: document.get("user_password") as? String,
+                                                       personImage: NSData(data: data!),
+                                                       surname: document.get("user_surname") as! String,
+                                                       birthdate: document.get("user_date_of_birth") as! String))
+                        }
+                    } else {
+                        self.employees.append(User(email: document.get("user_email") as! String,
+                                              gender: document.get("user_gender") as! String,
+                                              info: document.get("user_about") as! String,
+                                              isAdmin: document.get("user_is_admin") as! Bool,
+                                              name: document.get("user_name") as! String,
+                                              password: document.get("user_password") as? String,
+                                              personImage: nil,
+                                              surname: document.get("user_surname") as! String,
+                                              birthdate: document.get("user_date_of_birth") as! String))
+                    }
                 }
             }
         }
@@ -283,4 +300,30 @@ class PersonList {
         
         return error
     }
+    
+    func uploadPictureToStorage(data: Data?, name: String, completion: @escaping (String?) -> ()) {
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/png"
+        
+        let storageRef = Storage.storage().reference().child(name + ".png")
+        if let uploadData = data {
+            storageRef.putData(uploadData, metadata: metadata) { (metadata, error) in
+                storageRef.downloadURL { url, error in
+                    if let error = error {
+                        print("Error \(error)")
+                        completion(nil)
+                    } else {
+                        completion((url?.absoluteString)!)
+                    }
+                }
+            }
+        } else {
+            completion(nil)
+        }
+    }
+    
+    func getData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
+        URLSession.shared.dataTask(with: url, completionHandler: completion).resume()
+    }
+    
 }

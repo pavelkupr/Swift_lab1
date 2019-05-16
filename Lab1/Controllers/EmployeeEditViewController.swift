@@ -14,6 +14,7 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
     
     var personList: PersonList!
     var editPerson: User?
+    var tvc: EmployeesTableViewController?
     var isImageChanged = false
     var isKeyboardShowed = false
     let spacing: CGFloat = CGFloat(8)
@@ -47,6 +48,8 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
             }
             else {
                 self.personList.deletePerson(withInstance: self.editPerson!)
+                self.tvc?.updateVisualList()
+                self.tvc?.tableView.reloadData()
                 self.navigationController?.popViewController(animated: true)
             }
         }
@@ -209,6 +212,8 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
                 errorLabel.text = error
             }
             else {
+                tvc?.updateVisualList()
+                tvc?.tableView.reloadData()
                 navigationController?.popViewController(animated: true)
             }
         }
@@ -218,6 +223,10 @@ class EmployeeEditViewController: UIViewController, UIImagePickerControllerDeleg
                 errorLabel.text = error
             }
             else {
+                tvc?.updateVisualList()
+                tvc?.tableView.reloadData()
+                editPerson = personList.employees.first{$0.email == emailField.text!}
+                deleteButton.isHidden = false
                 navigationController?.popViewController(animated: true)
             }
         }

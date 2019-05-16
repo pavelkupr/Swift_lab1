@@ -98,9 +98,10 @@ class EmployeesTableViewController: UITableViewController {
         switch(segue.identifier ?? "") {
             
         case "Add":
-            guard segue.destination as? EmployeeEditViewController != nil else {
+            guard let editEmployeeVC = segue.destination as? EmployeeEditViewController else {
                 fatalError("Unexpected destination")
             }
+            editEmployeeVC.tvc = self
             
         case "Edit":
             guard let editEmployeeVC = segue.destination as? EmployeeEditViewController else {
@@ -114,6 +115,7 @@ class EmployeesTableViewController: UITableViewController {
             guard let index = tableView.indexPath(for: cell) else {
                 fatalError("Cell doesn't exist")
             }
+            editEmployeeVC.tvc = self
             editEmployeeVC.editPerson = visualList[index.row]
             
         default:
@@ -130,7 +132,7 @@ class EmployeesTableViewController: UITableViewController {
     
     //MARK: Private
 
-    private func updateVisualList() {
+    func updateVisualList() {
         
         visualList = [personList.currSignInUser!]
 
